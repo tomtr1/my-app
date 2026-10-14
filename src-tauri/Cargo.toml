@@ -1,0 +1,38 @@
+[package]
+name = "lifedash"
+version = "0.1.0"
+description = "Lifedash — personal dashboard"
+edition = "2021"
+rust-version = "1.80"
+
+[lib]
+name = "lifedash_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon", "unstable"] }
+tauri-plugin-http = "2"
+tauri-plugin-sql = { version = "2", features = ["sqlite"] }
+tauri-plugin-notification = "2"
+tauri-plugin-opener = "2"
+tauri-plugin-oauth = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+reqwest = { version = "0.12", default-features = false, features = ["json", "cookies", "rustls-tls", "gzip"] }
+base64 = "0.22"
+keyring = { version = "3", features = ["windows-native", "apple-native", "linux-native"] }
+tokio = { version = "1", features = ["sync", "time"] }
+url = "2"
+
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-autostart = "2"
+tauri-plugin-single-instance = "2"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true

@@ -1,0 +1,10 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Connected</title>
+<body style="font-family: system-ui; background: #0b0b0c; color: #eee; display: grid; place-items: center; height: 100vh">
+  <p>Connected — this window will close.</p>
+  <script>
+    window.opener?.postMessage({ type: 'oauth-callback', url: location.href }, location.origin);
+    setTimeout(() => window.close(), 400);
+  </script>
+</body>

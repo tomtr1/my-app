@@ -1,0 +1,24 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Permissions for the Lifedash main window only (mini-app webviews get none).",
+  "windows": ["main"],
+  "webviews": ["main"],
+  "permissions": [
+    "core:default",
+    "core:event:default",
+    "sql:default",
+    "sql:allow-execute",
+    "notification:default",
+    "opener:allow-open-url",
+    "oauth:allow-start",
+    "oauth:allow-cancel",
+    "autostart:allow-enable",
+    "autostart:allow-disable",
+    "autostart:allow-is-enabled",
+    {
+      "identifier": "http:default",
+      "allow": [{ "url": "https://**" }, { "url": "http://localhost:*" }, { "url": "http://127.0.0.1:*" }]
+    }
+  ]
+}
