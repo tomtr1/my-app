@@ -16,8 +16,24 @@ fn show_main(app: &tauri::AppHandle) {
     }
 }
 
+/// Release builds have no console, so startup failures would be invisible.
+/// Write them to %LOCALAPPDATA%\Lifedash\crash.log instead.
+fn crash_log(msg: &str) {
+    use std::io::Write;
+    let dir = std::env::var_os("LOCALAPPDATA")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(std::env::temp_dir)
+        .join("Lifedash");
+    let _ = std::fs::create_dir_all(&dir);
+    if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(dir.join("crash.log")) {
+        let ts = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d| d.as_secs()).unwrap_or(0);
+        let _ = writeln!(f, "[{ts}] {msg}");
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    std::panic::set_hook(Box::new(|info| crash_log(&format!("panic: {info}"))));
     let mut builder = tauri::Builder::default();
 
     #[cfg(desktop)]
@@ -88,5 +104,5 @@ pub fn run() {
             }
         })
         .run(tauri::generate_context!())
-        .expect("error while running Lifedash");
+        .unwrap_or_else(|e| crash_log(&format!("startup error: {e}")));
 }
